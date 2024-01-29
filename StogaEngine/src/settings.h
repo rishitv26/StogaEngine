@@ -1,0 +1,7 @@
+#ifndef SETTINGS_ENGINE_H
+#define SETTINGS_ENGINE_H
+
+
+
+
+#endif // SETTINGS_ENGINE_H

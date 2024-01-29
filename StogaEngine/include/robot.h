@@ -1,0 +1,7 @@
+#ifndef ROBOT_STOGAENGINE_H
+#define ROBOT_STOGAENGINE_H
+
+
+
+
+#endif // ROBOT_STOGAENGINE_H
