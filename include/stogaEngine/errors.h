@@ -21,6 +21,7 @@ namespace engine {
  */
 enum ErrorCodes {
     UNINITIALIZED_MOTOR = 300,
+    COMPONENT_OUT_OF_BOUND = 301,
 };
 
 class AbstractErrorHandler : public std::exception {
@@ -46,6 +47,11 @@ public:
 class UninitializedMotorError : public engine::AbstractErrorHandler {
 protected:
     engine::ErrorCodes error_type = engine::UNINITIALIZED_MOTOR;
+};
+
+class ComponentIndexOutOfRange : public engine::AbstractErrorHandler {
+protected:
+    engine::ErrorCodes error_type = engine::COMPONENT_OUT_OF_BOUND;
 };
 
 #endif // ERROR_SE_H

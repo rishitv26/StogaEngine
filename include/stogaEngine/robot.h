@@ -13,6 +13,7 @@
 #define ROBOT_SE_H
 
 #include "drivetrain.h"
+#include "tos.h"
 
 class Robot {
 public:
@@ -20,9 +21,12 @@ public:
      * @brief Drivetrain instance... Initialize accordingly!
      */
     engine::AbstractDrivetrain drivetrain;
-    //engine::TemporaryOdomSystem odom;
-
-
+    /**
+     * @brief TOS instance... Be careful while initializing
+     */
+    engine::AbstractTemporaryOdomSystem odom;
+    
+    
 };
 
 #endif // ROBOT_SE_H

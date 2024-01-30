@@ -13,7 +13,11 @@
 #define TOS_SE_H
 
 namespace engine {
-
+class AbstractTemporaryOdomSystem {
+private:
+public:
+    
+};
 };
 
 #endif // TOS_SE_H
