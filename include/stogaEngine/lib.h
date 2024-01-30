@@ -9,5 +9,10 @@
  * 
  */
 
-#include "drivetrain.h"
+#ifndef STOGAENGINE_LIBRARY_H
+#define STOGAENGINE_LIBRARY_H
 
+#include "drivetrain.h"
+#include "errors.h"
+
+#endif // STOGAENGINE_LIBRARY_H

@@ -13,9 +13,39 @@
 #define ERRORS_SE_H
 #include <iostream>
 
-class UninitializedMotorError : public std::exception {
+
+namespace engine {
+/**
+ * @brief Contains all error codes...
+ * This enum contains all error code for all errors that print automatically to the console.
+ */
+enum ErrorCodes {
+    UNINITIALIZED_MOTOR = 300,
+};
+
+class AbstractErrorHandler : public std::exception {
+protected:
+    engine::ErrorCodes error_type;
+    void display();
 public:
-    inline UninitializedMotorError(char* message = "");
+    /**
+     * @brief Construct a new Abstract Error Handler object.
+     * 
+     * @param message Optional message to print out...
+     */
+    explicit AbstractErrorHandler();
+    /**
+     * @brief Inherited function from std::exception...
+     * Returns an empty const char* string...
+     * @return const char* 
+     */
+    const char* what();
+};
+};
+
+class UninitializedMotorError : public engine::AbstractErrorHandler {
+protected:
+    engine::ErrorCodes error_type = engine::UNINITIALIZED_MOTOR;
 };
 
 #endif // ERROR_SE_H

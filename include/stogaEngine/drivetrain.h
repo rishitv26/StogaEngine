@@ -19,6 +19,19 @@ class AbstractDrivetrain {
 protected:
     pros::MotorGroup* right = nullptr;
     pros::MotorGroup* left = nullptr;
+
+    /**
+     * @brief Get the Right Motor Group object
+     * returns pointer to the MotorGroup object representing right side...
+     * @return pros::MotorGroup* 
+     */
+    pros::MotorGroup* getRightMotorGroup();
+    /**
+     * @brief Get the Left Motor Group object
+     * returns pointer to the MotorGroup object representing left side...
+     * @return pros::MotorGroup* 
+     */
+    pros::MotorGroup* getLeftMotorGroup();
 public:
     /// @brief Default constructor. Does nothing...
     explicit AbstractDrivetrain() {};
@@ -83,12 +96,22 @@ public:
 class TankDrivetrain : engine::AbstractDrivetrain {
 protected:
     bool reverse;
+    double wheel_circum;
 public:
     explicit TankDrivetrain() {};
     
-    void initialize(std::vector<int8_t> right_ports, std::vector<int8_t> left_ports, bool reverse=false);
+    void initialize(
+        std::vector<int8_t> right_ports, std::vector<int8_t> left_ports, 
+        double circum,
+        bool reverse=false
+    );
+    
     void move(int32_t analog);
     void turn(int32_t analog);
+
+    void reset();
+    double right_distance();
+    double left_distance();
 };
 
 #endif // DRIVETRAIN_SE_H
