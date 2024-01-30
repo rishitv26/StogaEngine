@@ -12,7 +12,7 @@
 #include "settings.h"
 
 void initialize() {
-	
+	pros::lcd::initialize();
 }
 
 void disabled() {
