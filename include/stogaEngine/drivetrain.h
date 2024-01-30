@@ -46,6 +46,34 @@ public:
     virtual void turn(int32_t analog);
 
     /**
+     * @brief Returns distance travelled by right side of the drive train in desired units.
+     * 
+     * This function returns the absolute distance covered by the right side of the drive train.
+     * Should not return undefined, or any errors.
+     * The function may return in any unit desired.
+     * Must throw error on the screen if motor class is not initialized.
+     */
+    virtual double right_distance();
+
+    /**
+     * @brief Returns distance travelled by left side of the drive train in desired units.
+     * 
+     * This function returns the absolute distance covered by the right side of the drive train.
+     * Should not return undefined, or any errors.
+     * The function may return in any unit desired.
+     * Must throw error on the screen if motor class is not initialized.
+     */
+    virtual double left_distance();
+
+    /**
+     * @brief Resets the values for left & right distances to 0
+     * 
+     * This function must reset left & right distance to 0.
+     * Must throw error on the screen if motor class is not initialized.
+     */
+    virtual void reset();
+
+    /**
      * @brief Default deconstructor... Edit if new heap variables are added.
      */
     ~AbstractDrivetrain();
