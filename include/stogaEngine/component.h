@@ -16,9 +16,53 @@
 #include "api.h"
 
 namespace engine {
-class Component {
+
+enum class binding_control_state {
+    DEFAULT = 0,
+    REVERSE = 1,
+    STICKY = 2,
+    REVERSE_STICKY = 3,
+};
+
+class ControllerComponent {
 private:
 public:
+    pros::Controller* controller;    
+    /**
+     * @brief Non-default constructor for the controller...
+     * Class is very similar to pros::Controller... all methods are availible
+     */
+    void initialize();
+    /**
+     * @brief Destroy the Controller Component object
+     */
+    ~ControllerComponent();
+};
+
+class Component {
+protected:
+    pros::controller_digital_e_t button1;
+    pros::controller_digital_e_t button2;
+    pros::controller_analog_e_t button3;
+
+    int button1_state = 0;
+    int button2_state = 0;
+public:
+    /**
+     * @brief Construct a new Component object
+     */
+    explicit Component(pros::controller_digital_e_t b1, 
+            pros::controller_digital_e_t b2=(pros::controller_digital_e_t)(-1), 
+            pros::controller_analog_e_t b3=(pros::controller_analog_e_t)(-1) )
+                : button1(b1), button2(b2), button3(b3) {}
+    /**
+     * @brief Binds the compenent to this control on the remote.
+     * 
+     * With the button provided, this will check if button is pressed and act accordingly.
+     * Run through an iterative loop.
+     */
+    void bind(binding_control_state b=binding_control_state::DEFAULT, ControllerComponent& c);
+
     /**
      * @brief Performs an action on this component. Uses 3 inputs 
      * 
@@ -29,13 +73,6 @@ public:
     virtual void action(int analog1, int analog2=0, int analog3=0);
 
     /**
-     * @brief Binds the compenent to this control on the remote.
-     * 
-     * @param control remote controll button or joystick to bind to. 
-     */
-    virtual void bind(pros::controller_digital_e_t control);
-
-    /**
      * @brief Stops the components from thier action, and releases them if they are in action
      */
     virtual void brake();
@@ -43,9 +80,10 @@ public:
 
 class ComponentList {
 private:
-    std::vector<Component> cpp_vect;
+    std::vector<Component*> cpp_vect;
 public:
     Component& operator[](size_t index);
+    void addNewComponent(Component* c);
 };
 };
 

@@ -87,6 +87,14 @@ public:
     virtual void reset();
 
     /**
+     * @brief Initializer template for other drive trains to utilize...
+     * This function must initialize all motors accordingly.
+     * 
+     * @param ... depends on what drivetrain type it is...
+     */
+    virtual void initialize(...);
+
+    /**
      * @brief Default deconstructor... Edit if new heap variables are added.
      */
     ~AbstractDrivetrain();

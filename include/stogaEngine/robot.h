@@ -14,19 +14,32 @@
 
 #include "drivetrain.h"
 #include "tos.h"
+#include "component.h"
 
-class Robot {
+namespace engine {
+class Bot {
 public:
+
+    engine::ControllerComponent master;
     /**
      * @brief Drivetrain instance... Initialize accordingly!
      */
     engine::AbstractDrivetrain drivetrain;
     /**
-     * @brief TOS instance... Be careful while initializing
+     * @brief TOS instance... Be careful while initializing this!
      */
     engine::AbstractTemporaryOdomSystem odom;
-    
-    
+    /**
+     * @brief All components for the bot...
+     * Add auxillary items like catas, pistons, etc...
+     */
+    engine::ComponentList components;
+
+    /**
+     * @brief Initializes the following fields...
+     */
+    void init();
+};
 };
 
 #endif // ROBOT_SE_H
