@@ -18,6 +18,8 @@
 
 namespace engine {
 class Bot {
+protected: 
+    void defaultDriveBehavior();
 public:
     /**
      * @brief Controller Instance, make sure to initialize it.
@@ -27,11 +29,11 @@ public:
      * @brief Drivetrain instance... Initialize accordingly!
      * Add drivetrain motors (and odom wheels if using them)
      */
-    engine::AbstractDrivetrain drivetrain;
+    engine::AbstractDrivetrain* drivetrain;
     /**
      * @brief TOS instance... Be careful while initializing this!
      */
-    engine::AbstractTemporaryOdomSystem odom;
+    engine::AbstractTemporaryOdomSystem* odom;
     /**
      * @brief All components for the bot...
      * Add auxillary items like catas, pistons, etc...
@@ -45,17 +47,39 @@ public:
 
     /**
      * @brief Initializes the following fields...
+     * 
+     * initializes all instances.. except for drivetrain and odom.
+     * They are programmer specific, so they are initialized in **setup()**
      */
-    void init();
+    virtual void initInstances();
 
     /**
      * @brief Initializes all instances of the robot...
      * Make sure to define this in inherited class.
-     * Must call **init()** method before anything
+     * Must call **initInstances()** method before anything
+     * 
+     * Register all compenents and sensors here.
+     * Also initialize drivetrain and odom.
+     * 
+     * Also configure all settings. Use things from settings.h if nessecary.
      */
-    virtual void initialize() = 0;
+    virtual void setup() = 0;
 
+    /**
+     * @brief Method for drivecontrol.
+     * 
+     * This method is run in a repetitive loop.
+     * Not nessecary to define, since bindings were setup in **setup()**
+     * 
+     * must call bind function for all components that are wanted to be used.
+     */
     virtual void driveControl();
+
+    /**
+     * @brief Destroy the Bot object
+     * Deletes odom & drivetrain
+     */
+    ~Bot();
 };
 };
 

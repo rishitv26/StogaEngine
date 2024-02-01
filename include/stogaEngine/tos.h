@@ -13,15 +13,18 @@
 #define TOS_SE_H
 
 #include <string>
+#include <array>
+#include "drivetrain.h"
 
 namespace engine {
 struct Waypoint {
-    std::string command;
+    std::string command = "";
     double param1 = 0;
     double param2 = 0;
     double param3 = 0;
 
     Waypoint(std::string& c, double p1=0, double p2=0, double p3=0);
+    Waypoint() {}
 };
 
 class AbstractTemporaryOdomSystem {
@@ -35,7 +38,7 @@ public:
      * presets are availible...
      * @param a the drivetrain to initialize TOS upon
      */
-    virtual void initialize(AbstractDrivetrain& a);
+    virtual void initialize(engine::AbstractDrivetrain& a);
 
     /**
      * @brief recalculates coordinates and updates x, y, and theta

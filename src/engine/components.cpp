@@ -10,19 +10,19 @@ engine::Component& engine::ComponentList::operator[](size_t index) {
     } else throw ComponentIndexOutOfRange();
 }
 
-void engine::Component::bind(engine::ControllerComponent& c, engine::binding_control_state b) {
-    if (b == binding_control_state::DEFAULT) {
+void engine::Component::bind(engine::ControllerComponent& c) {
+    if (bstate == binding_control_state::DEFAULT) {
         action(
             (int)button1 == -1 ? 0 : c.controller->get_digital(button1),
             (int)button2 == -1 ? 0 : c.controller->get_digital(button2),
             (int)button3 == -1 ? 0 : c.controller->get_analog(button3)
         );
-    } else if (b == binding_control_state::REVERSE) {
+    } else if (bstate == binding_control_state::REVERSE) {
         double one = (int)button1 == -1 ? 0 : !c.controller->get_digital(button1);
         double two = (int)button2 == -1 ? 0 : !c.controller->get_digital(button2);
         double three = (int)button3 == -1 ? 0 : -c.controller->get_analog(button3);
         action(one, two, three);
-    } else if (b == binding_control_state::STICKY) {
+    } else if (bstate == binding_control_state::STICKY) {
         if ((int)button1 == -1 ? 0 : c.controller->get_digital_new_press(button1)) button1_state = !button1_state;
         if ((int)button2 == -1 ? 0 : c.controller->get_digital_new_press(button2)) button1_state = !button1_state;
         action(
@@ -30,7 +30,7 @@ void engine::Component::bind(engine::ControllerComponent& c, engine::binding_con
             button2_state,
             (int)button3 == -1 ? 0 : c.controller->get_analog(button3)
         );
-    } else if (b == binding_control_state::REVERSE_STICKY) {
+    } else if (bstate == binding_control_state::REVERSE_STICKY) {
         if ((int)button1 == -1 ? 0 : c.controller->get_digital_new_press(button1)) button1_state = !button1_state;
         if ((int)button2 == -1 ? 0 : c.controller->get_digital_new_press(button2)) button1_state = !button1_state;
         action(
@@ -45,8 +45,17 @@ engine::ControllerComponent::~ControllerComponent() {
     delete controller;
 };
 
-void engine::ComponentList::addNewComponent(Component* c) {
-    cpp_vect.push_back(c);
+void engine::Component::brake() {action(0);}
+
+template <typename T>
+void engine::ComponentList::registerNewComponent(T& c) {
+    engine::Component* thing = (engine::Component*)(&c);
+    try {
+        thing->stringId();
+    } catch {
+        throw InvalidComponent();
+    }
+    cpp_vect.push_back(thing);
 }
 
 size_t engine::ComponentList::size() {
@@ -59,7 +68,7 @@ engine::SensorComponent& engine::SensorComponentList::operator[](size_t index) {
     } else throw SensorComponentIndexOutOfRange();
 }
 
-void engine::SensorComponentList::addNewSensorComponent(SensorComponent* s) {
+void engine::SensorComponentList::registerNewSensorComponent(SensorComponent* s) {
     cpp_vect.push_back(s);
 }
 
@@ -78,3 +87,72 @@ double engine::SensorComponent::data2() {
 double engine::SensorComponent::data3() {
     return data1();
 }
+
+void engine::ComponentList::bindAll(ControllerComponent& c) {
+    for (Component* i : cpp_vect) {
+        i->bind(c);
+    }
+}
+
+void engine::SensorComponentList::updateAll() {
+    for (SensorComponent* i : cpp_vect) {
+        i->data1();
+        i->data2();
+        i->data3();
+    }
+}
+
+engine::PneumaticComponent::PneumaticComponent(
+    int p, pros::controller_digital_e_t b1, 
+    pros::controller_digital_e_t b2, 
+    pros::controller_analog_e_t b3,
+    engine::binding_control_state bs
+) {
+    piston = new pros::ADIDigitalOut(p);
+    port = p;
+    button1 = b1;
+    button2 = b2;
+    button3 = b3;
+    bstate = bs;
+}
+
+void engine::PneumaticComponent::action(int analog1, int analog2, int analog3) {
+    piston->set_value(analog1);
+}
+
+engine::PneumaticComponent::~PneumaticComponent() {delete piston;}
+
+std::string engine::PneumaticComponent::stringId() {return "pneumatic";}
+
+
+engine::MotorComponent::MotorComponent (
+    int p, pros::controller_digital_e_t b1, 
+    pros::controller_digital_e_t b2, 
+    pros::controller_analog_e_t b3,
+    engine::binding_control_state bs,
+    bool r,
+    pros::motor_brake_mode_e brake
+) {
+    motor = new pros::Motor(p);
+    motor->set_brake_mode(brake);
+    port = p;
+    button1 = b1;
+    button2 = b2;
+    button3 = b3;
+    bstate = bs;
+    reverse = r;
+}
+
+void engine::MotorComponent::action(int analog1, int analog2, int analog3) {
+    if (analog1 || analog2) {
+        if (!reverse) motor->move_voltage(120000);
+        else motor->move_voltage(120000);
+    } else if (analog3 != 0) {
+        if (!reverse) motor->move(analog3);
+        else motor->move(-analog3);
+    } else brake();
+}
+
+void engine::MotorComponent::brake() {motor->brake();}
+
+std::string engine::MotorComponent::stringId() {return "aux motor";}

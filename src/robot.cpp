@@ -11,9 +11,29 @@
 
 #include "stogaEngine/lib.h"
 
-class Robot {
+class Robot : engine::Bot {
 private:
-    
 public:
+    /*
+     * Must call **initInstances()** method before anything
+     * 
+     * Register all compenents and sensors here.
+     * Also initialize drivetrain and odom.
+     * 
+     * Also configure all settings. Use things from settings.h if nessecary.
+     */
+    void setup() {
+        initInstances();
+        // drivetrain = new [some class... lambda or preset];
+        // odom = new [some class... lambda or preset];
+        engine::MotorComponent m(1);
+        components.registerNewComponent<engine::MotorComponent>(m);
+        engine::PneumaticComponent p('A');
+        components.registerNewComponent<engine::PneumaticComponent>(p);
+    }
+
+    void driveControl() {
+        defaultDriveBehavior();
+    }
 };
 

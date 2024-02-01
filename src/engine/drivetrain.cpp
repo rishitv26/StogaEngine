@@ -9,6 +9,14 @@ pros::MotorGroup* engine::AbstractDrivetrain::getLeftMotorGroup() {
     return left;
 }
 
+engine::presets::TankDrivetrain::TankDrivetrain(
+    std::vector<int8_t> right_ports, std::vector<int8_t> left_ports, 
+    double circum,
+    bool reverse
+) {
+    initialize(right_ports, left_ports, circum, reverse);
+}
+
 engine::AbstractDrivetrain::~AbstractDrivetrain() {
     delete right;
     delete left;
@@ -22,7 +30,7 @@ static std::vector<int8_t> negate(std::vector<int8_t> v) {
     return tor;
 }
 
-void TankDrivetrain::initialize(std::vector<int8_t> right_ports, std::vector<int8_t> left_ports, double circum, bool r) {
+void engine::presets::TankDrivetrain::initialize(std::vector<int8_t> right_ports, std::vector<int8_t> left_ports, double circum, bool r) {
     wheel_circum = circum;
     reverse = r;
     if (r) {
@@ -37,28 +45,28 @@ void TankDrivetrain::initialize(std::vector<int8_t> right_ports, std::vector<int
     left->set_encoder_units_all(pros::E_MOTOR_ENCODER_ROTATIONS);
 }
 
-void TankDrivetrain::move(int32_t analog) {
+void engine::presets::TankDrivetrain::move(int32_t analog) {
     if (right == nullptr || left == nullptr)
         throw UninitializedMotorError();
     right->move(analog);
     left->move(analog);
 }
 
-void TankDrivetrain::turn(int32_t analog) {
+void engine::presets::TankDrivetrain::turn(int32_t analog) {
     if (right == nullptr || left == nullptr)
         throw UninitializedMotorError();
     right->move(analog);
     left->move(-analog);
 }
 
-void TankDrivetrain::reset() {
+void engine::presets::TankDrivetrain::reset() {
     if (right == nullptr || left == nullptr)
         throw UninitializedMotorError();
     right->tare_position_all();
     left->tare_position_all();
 }
 
-double TankDrivetrain::right_distance() {
+double engine::presets::TankDrivetrain::right_distance() {
     if (right == nullptr || left == nullptr)
         throw UninitializedMotorError();
     double norm;
@@ -67,10 +75,10 @@ double TankDrivetrain::right_distance() {
         norm += right->get_position(i);
     }
     norm /= i;
-    return norm;
+    return norm * wheel_circum;
 }
 
-double TankDrivetrain::left_distance() {
+double engine::presets::TankDrivetrain::left_distance() {
     if (right == nullptr || left == nullptr)
         throw UninitializedMotorError();
     double norm;
@@ -79,5 +87,5 @@ double TankDrivetrain::left_distance() {
         norm += left->get_position(i);
     }
     norm /= i;
-    return norm;
+    return norm * wheel_circum;
 }

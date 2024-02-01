@@ -45,7 +45,7 @@ public:
      *  
      * @param analog analog values to move drivetrain
     */
-    virtual void move(int32_t analog);
+    virtual void move(int32_t analog) = 0;
 
     /**
      * @brief Turns drive train by "analog"
@@ -56,7 +56,7 @@ public:
      * 
      * @param analog analog values to turn drivetrain
     */
-    virtual void turn(int32_t analog);
+    virtual void turn(int32_t analog) = 0;
 
     /**
      * @brief Returns distance travelled by right side of the drive train in desired units.
@@ -66,7 +66,7 @@ public:
      * The function may return in any unit desired.
      * Must throw error on the screen if motor class is not initialized.
      */
-    virtual double right_distance();
+    virtual double right_distance() = 0;
 
     /**
      * @brief Returns distance travelled by left side of the drive train in desired units.
@@ -76,7 +76,7 @@ public:
      * The function may return in any unit desired.
      * Must throw error on the screen if motor class is not initialized.
      */
-    virtual double left_distance();
+    virtual double left_distance() = 0;
 
     /**
      * @brief Resets the values for left & right distances to 0
@@ -84,7 +84,7 @@ public:
      * This function must reset left & right distance to 0.
      * Must throw error on the screen if motor class is not initialized.
      */
-    virtual void reset();
+    virtual void reset() = 0;
 
     /**
      * @brief Initializer template for other drive trains to utilize...
@@ -99,22 +99,32 @@ public:
         std::vector<int8_t> right_ports, std::vector<int8_t> left_ports, 
         double circum,
         bool reverse=false
-    );
+    ) = 0;
 
     /**
      * @brief Default deconstructor... Edit if new heap variables are added.
      */
     ~AbstractDrivetrain();
 };
-};
 
+namespace presets {
 class TankDrivetrain : engine::AbstractDrivetrain {
 protected:
     bool reverse;
     double wheel_circum;
 public:
     explicit TankDrivetrain() {};
+
+    explicit TankDrivetrain(
+        std::vector<int8_t> right_ports, std::vector<int8_t> left_ports, 
+        double circum,
+        bool reverse=false
+    );
     
+    /*
+    * for @param left_ports & rght_ports, they must be positive numbers.
+    * keep in mind for @param circum, take the mechanical advantage into account.
+    */
     void initialize(
         std::vector<int8_t> right_ports, std::vector<int8_t> left_ports, 
         double circum,
@@ -127,6 +137,8 @@ public:
     void reset();
     double right_distance();
     double left_distance();
+};
+};
 };
 
 #endif // DRIVETRAIN_SE_H

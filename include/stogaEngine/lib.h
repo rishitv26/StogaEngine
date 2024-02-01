@@ -15,5 +15,8 @@
 #include "drivetrain.h"
 #include "errors.h"
 #include "robot.h"
+#include "tos.h"
+#include "component.h"
+#include "calulations.h"
 
 #endif // STOGAENGINE_LIBRARY_H

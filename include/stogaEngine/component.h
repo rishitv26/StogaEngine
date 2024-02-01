@@ -16,6 +16,7 @@
 #include "stogaEngine/errors.h"
 #include "api.h"
 
+// all abstract classes...
 namespace engine {
 enum class binding_control_state {
     DEFAULT = 0,
@@ -44,12 +45,14 @@ protected:
     pros::controller_digital_e_t button1;
     pros::controller_digital_e_t button2;
     pros::controller_analog_e_t button3;
+    engine::binding_control_state bstate;
 
     int button1_state = 0;
     int button2_state = 0;
 
     int8_t port;
 public:
+    explicit Component() {}
     /**
      * @brief Construct a new Component object with port and remote binding...
      * 
@@ -60,15 +63,18 @@ public:
      */
     explicit Component(int8_t p, pros::controller_digital_e_t b1=(pros::controller_digital_e_t)(-1), 
             pros::controller_digital_e_t b2=(pros::controller_digital_e_t)(-1), 
-            pros::controller_analog_e_t b3=(pros::controller_analog_e_t)(-1) )
-                : button1(b1), button2(b2), button3(b3), port(p) {}
+            pros::controller_analog_e_t b3=(pros::controller_analog_e_t)(-1),
+            engine::binding_control_state bs=binding_control_state::DEFAULT)
+                : button1(b1), button2(b2), button3(b3), port(p), bstate(bs) {}
     /**
      * @brief Binds the compenent to this control on the remote.
      * 
      * With the button provided, this will check if button is pressed and act accordingly.
-     * Run through an iterative loop.
+     * Run through an iterative loop. 
+     * @param c controller instance
      */
-    void bind(ControllerComponent& c, binding_control_state b=binding_control_state::DEFAULT);
+    void bind(ControllerComponent& c);
+    
     /**
      * @brief Performs an action on this component. Uses 3 inputs 
      * 
@@ -81,7 +87,7 @@ public:
     /**
      * @brief Stops the components from thier action, and releases them if they are in action
      */
-    virtual void brake() = 0;
+    virtual void brake();
 
     /**
      * @brief Returns the "id" of the current component.
@@ -111,19 +117,22 @@ public:
     virtual void reset() = 0;
 
     /**
-     * @brief Return 1st value of sensor.
+     * @brief Return 1st value of sensor.\
+     * will UPDATE then return
      * @return double sensor value
      */
     virtual double data1() = 0;
 
     /**
      * @brief Return 2nd value of sensor (optional)
+     * will UPDATE then return
      * @return double sensor value
      */
     virtual double data2();
     
     /**
      * @brief Return 3rd value of sensor (optional)
+     * will UPDATE then return
      * @return double sensor value
      */
     virtual double data3();
@@ -134,8 +143,11 @@ private:
     std::vector<Component*> cpp_vect;
 public:
     Component& operator[](size_t index);
-    void addNewComponent(Component* c);
+    template <typename T>
+    void registerNewComponent(T& c);
+    
     size_t size();
+    void bindAll(ControllerComponent& c);
 };
 
 class SensorComponentList {
@@ -143,8 +155,44 @@ private:
     std::vector<SensorComponent*> cpp_vect;
 public:
     SensorComponent& operator[](size_t index);
-    void addNewSensorComponent(SensorComponent* c);
+    void registerNewSensorComponent(SensorComponent* c);
     size_t size();
+
+    void updateAll();
+};
+};
+
+// built in components:
+namespace engine {
+class PneumaticComponent : Component {
+private:
+    pros::ADIDigitalOut* piston;
+public:
+    PneumaticComponent(int p, pros::controller_digital_e_t b1=(pros::controller_digital_e_t)(-1), 
+            pros::controller_digital_e_t b2=(pros::controller_digital_e_t)(-1), 
+            pros::controller_analog_e_t b3=(pros::controller_analog_e_t)(-1),
+            engine::binding_control_state bs=binding_control_state::DEFAULT);
+    // only analog1 is used
+    void action(int analog1, int analog2=0, int analog3=0);
+    std::string stringId();
+    ~PneumaticComponent();
+};
+
+class MotorComponent : Component {
+private:
+    pros::Motor* motor;
+    bool reverse;
+public:
+    MotorComponent(int p, pros::controller_digital_e_t b1=(pros::controller_digital_e_t)(-1), 
+        pros::controller_digital_e_t b2=(pros::controller_digital_e_t)(-1), 
+        pros::controller_analog_e_t b3=(pros::controller_analog_e_t)(-1),
+        engine::binding_control_state bs=binding_control_state::DEFAULT,
+        bool reverse=false,
+        pros::motor_brake_mode_e brake=pros::E_MOTOR_BRAKE_COAST);
+    void action(int analog1, int analog2=0, int analog3=0);
+    void brake();
+    std::string stringId();
+    ~MotorComponent();
 };
 };
 
