@@ -24,5 +24,6 @@ void engine::AbstractErrorHandler::display() {
 }
 
 const char* engine::AbstractErrorHandler::what() {
+    display();
     return ("SE" + std::to_string(error_type)).c_str();
 }

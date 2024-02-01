@@ -18,6 +18,8 @@ private:
     double KP;
     double KI;
     double KD;
+    double MAX_INTEGRAL;
+    double MIN_INTEGRAL;
 
     double integral;
     double prev_error;

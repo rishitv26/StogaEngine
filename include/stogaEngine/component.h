@@ -11,12 +11,12 @@
 
 #ifndef COMPONENT_SE_H
 #define COMPONENT_SE_H
+
 #include <vector>
 #include "stogaEngine/errors.h"
 #include "api.h"
 
 namespace engine {
-
 enum class binding_control_state {
     DEFAULT = 0,
     REVERSE = 1,
@@ -47,22 +47,28 @@ protected:
 
     int button1_state = 0;
     int button2_state = 0;
+
+    int8_t port;
 public:
     /**
-     * @brief Construct a new Component object
+     * @brief Construct a new Component object with port and remote binding...
+     * 
+     * @param p port [0, 21]
+     * @param b1 button to bind (all digital buttons)
+     * @param b2 button to bind (all digital buttons)
+     * @param b3 joystick / analog to bind (all analog joystick values)
      */
-    explicit Component(pros::controller_digital_e_t b1, 
+    explicit Component(int8_t p, pros::controller_digital_e_t b1=(pros::controller_digital_e_t)(-1), 
             pros::controller_digital_e_t b2=(pros::controller_digital_e_t)(-1), 
             pros::controller_analog_e_t b3=(pros::controller_analog_e_t)(-1) )
-                : button1(b1), button2(b2), button3(b3) {}
+                : button1(b1), button2(b2), button3(b3), port(p) {}
     /**
      * @brief Binds the compenent to this control on the remote.
      * 
      * With the button provided, this will check if button is pressed and act accordingly.
      * Run through an iterative loop.
      */
-    void bind(binding_control_state b=binding_control_state::DEFAULT, ControllerComponent& c);
-
+    void bind(ControllerComponent& c, binding_control_state b=binding_control_state::DEFAULT);
     /**
      * @brief Performs an action on this component. Uses 3 inputs 
      * 
@@ -70,12 +76,57 @@ public:
      * @param analog2 analog2 value from [-127, 127]
      * @param analog3 analog3 value from [-127, 127]
      */
-    virtual void action(int analog1, int analog2=0, int analog3=0);
+    virtual void action(int analog1, int analog2=0, int analog3=0) = 0;
 
     /**
      * @brief Stops the components from thier action, and releases them if they are in action
      */
-    virtual void brake();
+    virtual void brake() = 0;
+
+    /**
+     * @brief Returns the "id" of the current component.
+     * 
+     * An ID is a way to differentiate different types of components. return any string that helps to identify this component.
+     * @return std::string 
+     */
+    virtual std::string stringId() = 0;
+};
+
+class SensorComponent {
+protected:
+    int8_t port;
+public:
+    /**
+     * @brief Non-default contructor... Construct accordingly
+     * 
+     * Initialize the sensor properly.
+     * @param p port [0, 21]
+     * @param ... can change depending on child.
+     */
+    virtual void initialize(int8_t p, ...);
+    
+    /**
+     * @brief Reset the values of the sensor...
+     */
+    virtual void reset() = 0;
+
+    /**
+     * @brief Return 1st value of sensor.
+     * @return double sensor value
+     */
+    virtual double data1() = 0;
+
+    /**
+     * @brief Return 2nd value of sensor (optional)
+     * @return double sensor value
+     */
+    virtual double data2();
+    
+    /**
+     * @brief Return 3rd value of sensor (optional)
+     * @return double sensor value
+     */
+    virtual double data3();
 };
 
 class ComponentList {
@@ -84,6 +135,16 @@ private:
 public:
     Component& operator[](size_t index);
     void addNewComponent(Component* c);
+    size_t size();
+};
+
+class SensorComponentList {
+private:
+    std::vector<SensorComponent*> cpp_vect;
+public:
+    SensorComponent& operator[](size_t index);
+    void addNewSensorComponent(SensorComponent* c);
+    size_t size();
 };
 };
 

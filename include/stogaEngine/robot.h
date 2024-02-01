@@ -19,10 +19,13 @@
 namespace engine {
 class Bot {
 public:
-
+    /**
+     * @brief Controller Instance, make sure to initialize it.
+     */
     engine::ControllerComponent master;
     /**
      * @brief Drivetrain instance... Initialize accordingly!
+     * Add drivetrain motors (and odom wheels if using them)
      */
     engine::AbstractDrivetrain drivetrain;
     /**
@@ -34,11 +37,25 @@ public:
      * Add auxillary items like catas, pistons, etc...
      */
     engine::ComponentList components;
+    /**
+     * @brief All sensors on the bot...
+     * Add important sensors like IMU, vision, color, ETC...
+     */
+    engine::SensorComponentList sensors;
 
     /**
      * @brief Initializes the following fields...
      */
     void init();
+
+    /**
+     * @brief Initializes all instances of the robot...
+     * Make sure to define this in inherited class.
+     * Must call **init()** method before anything
+     */
+    virtual void initialize() = 0;
+
+    virtual void driveControl();
 };
 };
 

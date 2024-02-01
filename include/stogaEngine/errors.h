@@ -22,6 +22,7 @@ namespace engine {
 enum ErrorCodes {
     UNINITIALIZED_MOTOR = 300,
     COMPONENT_OUT_OF_BOUND = 301,
+    SENSOR_COMPONENT_OUT_OF_BOUND = 302,
 };
 
 class AbstractErrorHandler : public std::exception {
@@ -37,8 +38,8 @@ public:
     explicit AbstractErrorHandler();
     /**
      * @brief Inherited function from std::exception...
-     * Returns an empty const char* string...
-     * @return const char* 
+     * Will not get a chance to return anything...
+     * In case, will return error code as string. 
      */
     const char* what();
 };
@@ -52,6 +53,11 @@ protected:
 class ComponentIndexOutOfRange : public engine::AbstractErrorHandler {
 protected:
     engine::ErrorCodes error_type = engine::COMPONENT_OUT_OF_BOUND;
+};
+
+class SensorComponentIndexOutOfRange : public engine::AbstractErrorHandler {
+protected:
+    engine::ErrorCodes error_type = engine::SENSOR_COMPONENT_OUT_OF_BOUND;
 };
 
 #endif // ERROR_SE_H

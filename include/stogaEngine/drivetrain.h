@@ -88,11 +88,18 @@ public:
 
     /**
      * @brief Initializer template for other drive trains to utilize...
-     * This function must initialize all motors accordingly.
+     * This function must initialize all motors & sensors accordingly.
      * 
-     * @param ... depends on what drivetrain type it is...
+     * @param right_ports motor ports for the right
+     * @param left_ports motor ports for the left
+     * @param circum circumference of the wheel
+     * @param reverse reverses left relative to right (and vice versa)
      */
-    virtual void initialize(...);
+    virtual void initialize(
+        std::vector<int8_t> right_ports, std::vector<int8_t> left_ports, 
+        double circum,
+        bool reverse=false
+    );
 
     /**
      * @brief Default deconstructor... Edit if new heap variables are added.
