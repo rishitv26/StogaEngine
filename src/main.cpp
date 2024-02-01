@@ -10,23 +10,26 @@
 
 #include "main.h"
 #include "settings.h"
+#include "robot.h"
+
+Robot robot;
 
 void initialize() {
 	pros::lcd::initialize();
+	robot.setup();
 }
 
 void disabled() {
-
+	robot.components.haltAll();
 }
 
-void competition_initialize() {
+void competition_initialize() {}
 
-}
-
+// job of interpreter...
 void autonomous() {
 
 }
 
 void opcontrol() {
-	
+	robot.driveControl();	
 }

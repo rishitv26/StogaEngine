@@ -162,3 +162,9 @@ void engine::MotorComponent::action(int analog1, int analog2, int analog3) {
 }
 
 void engine::MotorComponent::brake() {motor->brake();}
+
+void engine::ComponentList::haltAll() {
+    for (int i = 0; i < size(); ++i) {
+        cpp_vect[i]->brake();
+    }
+}

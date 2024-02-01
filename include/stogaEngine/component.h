@@ -154,6 +154,7 @@ public:
     
     size_t size();
     void bindAll(ControllerComponent& c);
+    void haltAll();
 };
 
 class SensorComponentList {

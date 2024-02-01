@@ -11,7 +11,7 @@
 
 #include "stogaEngine/lib.h"
 
-class Robot : engine::Bot {
+class Robot : public engine::Bot {
 private:
 public:
     /*
