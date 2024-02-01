@@ -23,7 +23,8 @@ enum ErrorCodes {
     UNINITIALIZED_MOTOR = 300,
     COMPONENT_OUT_OF_BOUND = 301,
     SENSOR_COMPONENT_OUT_OF_BOUND = 302,
-    INVALID_COMPONENT = 303
+    INVALID_COMPONENT = 303,
+    INVALID_SENSOR_COMPONENT = 304,
 };
 
 class AbstractErrorHandler : public std::exception {
@@ -63,6 +64,10 @@ protected:
 
 class InvalidComponent : public engine::AbstractErrorHandler {
     engine::ErrorCodes error_type = engine::INVALID_COMPONENT;
+};
+
+class InvalidSensorComponent : public engine::AbstractErrorHandler {
+    engine::ErrorCodes error_type = engine::INVALID_SENSOR_COMPONENT;
 };
 
 #endif // ERROR_SE_H

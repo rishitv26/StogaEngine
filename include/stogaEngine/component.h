@@ -95,7 +95,7 @@ public:
      * An ID is a way to differentiate different types of components. return any string that helps to identify this component.
      * @return std::string 
      */
-    virtual std::string stringId() = 0;
+    std::string stringId();
 };
 
 class SensorComponent {
@@ -109,7 +109,7 @@ public:
      * @param p port [0, 21]
      * @param ... can change depending on child.
      */
-    virtual void initialize(int8_t p, ...);
+    virtual void initialize(int8_t p);
     
     /**
      * @brief Reset the values of the sensor...
@@ -136,6 +136,12 @@ public:
      * @return double sensor value
      */
     virtual double data3();
+
+    /**
+     * @brief Returns the ID of the instance... 
+     * @return std::string 
+     */
+    std::string stringId();
 };
 
 class ComponentList {
@@ -155,9 +161,10 @@ private:
     std::vector<SensorComponent*> cpp_vect;
 public:
     SensorComponent& operator[](size_t index);
-    void registerNewSensorComponent(SensorComponent* c);
+    template <typename T>
+    void registerNewSensorComponent(T& c);
+    
     size_t size();
-
     void updateAll();
 };
 };

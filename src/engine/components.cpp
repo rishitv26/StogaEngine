@@ -41,6 +41,8 @@ void engine::Component::bind(engine::ControllerComponent& c) {
     }
 }
 
+std::string engine::Component::stringId() {return "component";}
+
 engine::ControllerComponent::~ControllerComponent() {
     delete controller;
 };
@@ -51,7 +53,7 @@ template <typename T>
 void engine::ComponentList::registerNewComponent(T& c) {
     engine::Component* thing = (engine::Component*)(&c);
     try {
-        thing->stringId();
+        if (thing->stringId() != "component") throw InvalidComponent();
     } catch {
         throw InvalidComponent();
     }
@@ -68,15 +70,22 @@ engine::SensorComponent& engine::SensorComponentList::operator[](size_t index) {
     } else throw SensorComponentIndexOutOfRange();
 }
 
-void engine::SensorComponentList::registerNewSensorComponent(SensorComponent* s) {
-    cpp_vect.push_back(s);
+template <typename T>
+void engine::SensorComponentList::registerNewSensorComponent(T& s) {
+    engine::SensorComponent* thing = (engine::SensorComponent*)(&c);
+    try {
+        if (thing->stringId() != "sensor") throw InvalidSensorComponent();
+    } catch {
+        throw InvalidSensorComponent();
+    }
+    cpp_vect.push_back(thing);
 }
 
 size_t engine::SensorComponentList::size() {
     return cpp_vect.size();
 }
 
-void engine::SensorComponent::initialize(int8_t p, ...) {
+void engine::SensorComponent::initialize(int8_t p) {
     port = p;
 }
 
@@ -87,6 +96,8 @@ double engine::SensorComponent::data2() {
 double engine::SensorComponent::data3() {
     return data1();
 }
+
+std::string engine::SensorComponent::stringId() {return "sensor";}
 
 void engine::ComponentList::bindAll(ControllerComponent& c) {
     for (Component* i : cpp_vect) {
@@ -122,9 +133,6 @@ void engine::PneumaticComponent::action(int analog1, int analog2, int analog3) {
 
 engine::PneumaticComponent::~PneumaticComponent() {delete piston;}
 
-std::string engine::PneumaticComponent::stringId() {return "pneumatic";}
-
-
 engine::MotorComponent::MotorComponent (
     int p, pros::controller_digital_e_t b1, 
     pros::controller_digital_e_t b2, 
@@ -154,5 +162,3 @@ void engine::MotorComponent::action(int analog1, int analog2, int analog3) {
 }
 
 void engine::MotorComponent::brake() {motor->brake();}
-
-std::string engine::MotorComponent::stringId() {return "aux motor";}
