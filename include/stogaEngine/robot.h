@@ -19,7 +19,8 @@
 namespace engine {
 class Bot {
 protected: 
-    void defaultDriveBehavior();
+    void defaultDriveBehavior(pros::controller_analog_e_t move=pros::E_CONTROLLER_ANALOG_LEFT_Y, 
+        pros::controller_analog_e_t turn=pros::E_CONTROLLER_ANALOG_RIGHT_X, int drift=5);
 public:
     /**
      * @brief Controller Instance, make sure to initialize it.

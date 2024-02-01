@@ -87,6 +87,14 @@ public:
     virtual void reset() = 0;
 
     /**
+     * @brief Set the raw analog values on left and right sides.
+     * 
+     * @param right analog of right [-127, 127]
+     * @param left analog of left [-127, 127]
+     */
+    virtual void set_raw_analog(int8_t right, int8_t left);
+
+    /**
      * @brief Initializer template for other drive trains to utilize...
      * This function must initialize all motors & sensors accordingly.
      * 

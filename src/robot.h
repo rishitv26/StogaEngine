@@ -24,7 +24,7 @@ public:
      */
     void setup() {
         initInstances();
-        // drivetrain = new [some class... lambda or preset];
+        drivetrain = (engine::AbstractDrivetrain*)(new engine::presets::TankDrivetrain({}, {}, 20));
         // odom = new [some class... lambda or preset];
         engine::MotorComponent m(1);
         components.registerNewComponent<engine::MotorComponent>(m);
@@ -32,8 +32,19 @@ public:
         components.registerNewComponent<engine::PneumaticComponent>(p);
     }
 
+    /**
+     * @brief Drive control...
+     * 
+     * Code your opcontrol (or drive control) here. There is already a default behavior provided
+     * such that it follows the desired binding set for each component in **setup()**
+     */
     void driveControl() {
         defaultDriveBehavior();
+    }
+
+    ~Robot() {
+        delete drivetrain;
+        delete odom;
     }
 };
 

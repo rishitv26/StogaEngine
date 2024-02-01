@@ -17,6 +17,11 @@ engine::presets::TankDrivetrain::TankDrivetrain(
     initialize(right_ports, left_ports, circum, reverse);
 }
 
+void engine::AbstractDrivetrain::set_raw_analog(int8_t right, int8_t left) {
+    getRightMotorGroup()->move(right);
+    getLeftMotorGroup()->move(left);
+}
+
 engine::AbstractDrivetrain::~AbstractDrivetrain() {
     delete right;
     delete left;
