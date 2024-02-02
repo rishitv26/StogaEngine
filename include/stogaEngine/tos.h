@@ -58,7 +58,7 @@ public:
      * @param point waypoint to reach...
      * @return std::array<double, 2> 
      */
-    virtual std::array<double, 2> move(Waypoint* point=nullptr);
+    virtual std::array<double, 2> move(Waypoint& point);
 
     /**
      * @brief calculates the PID for turning clockwise / counterclockwise.
@@ -70,7 +70,7 @@ public:
      * @param point waypoint to reach...
      * @return std::array<double, 2> 
      */
-    virtual std::array<double, 2> turn(Waypoint* point=nullptr);
+    virtual std::array<double, 2> turn(Waypoint& point);
 
     /**
      * @brief Powers foreward without PID regulation
@@ -82,7 +82,7 @@ public:
      * @param point waypoint to reach...
      * @return std::array<double, 2>
      */
-    virtual std::array<double, 2> power(Waypoint* point=nullptr);
+    virtual std::array<double, 2> power(Waypoint* point);
 
     /**
      * @brief Checks if PID is running...
@@ -95,6 +95,21 @@ public:
      * @return false motion command is complete.
      */
     virtual bool is_running();
+};
+
+namespace presets {
+class IMUVectorOrientedTOS : AbstractTemporaryOdomSystem {
+private:
+    engine::AbstractDrivetrain* drivetrain;
+public:
+    void initialize(AbstractDrivetrain& a);
+    std::array<double, 3> updateCoordinates();
+    std::array<double, 2> move(Waypoint* point=nullptr);
+    std::array<double, 2> turn(Waypoint& point);
+    std::array<double, 2> power(Waypoint* point);
+    bool is_running();
+};
+
 };
 };
 
