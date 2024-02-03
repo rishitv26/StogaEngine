@@ -157,6 +157,8 @@ public:
     size_t size();
     void bindAll(ControllerComponent& c);
     void haltAll();
+
+    Component* findID(std::string& s);
 };
 
 class SensorComponentList {
@@ -169,6 +171,8 @@ public:
     
     size_t size();
     void updateAll();
+
+    SensorComponent* findID(std::string& s);
 };
 };
 

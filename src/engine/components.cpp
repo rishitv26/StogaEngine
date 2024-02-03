@@ -83,6 +83,20 @@ void engine::ComponentList::bindAll(ControllerComponent& c) {
     }
 }
 
+engine::SensorComponent* engine::SensorComponentList::findID(std::string& s) {
+    for (int i = 0; i < size(); ++i) {
+        if (cpp_vect[i]->stringId() == s) return cpp_vect[i];
+    }
+    throw NonexistentSensorComponentID();
+}
+
+engine::Component* engine::ComponentList::findID(std::string& s) {
+    for (int i = 0; i < size(); ++i) {
+        if (cpp_vect[i]->stringId() == s) return cpp_vect[i];
+    }
+    throw NonexistentComponentID();
+}
+
 void engine::SensorComponentList::updateAll() {
     for (SensorComponent* i : cpp_vect) {
         i->data1();
@@ -152,7 +166,7 @@ void engine::MotorComponent::action(int analog1, int analog2, int analog3) {
     } else brake();
 }
 
-void engine::MotorComponent::brake() {motor->brake();}
+void engine::MotorComponent::brake() { motor->brake(); }
 
 engine::MotorComponent::~MotorComponent() { delete motor; }
 

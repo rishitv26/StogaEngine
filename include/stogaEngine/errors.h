@@ -25,6 +25,8 @@ enum ErrorCodes {
     SENSOR_COMPONENT_OUT_OF_BOUND = 302,
     INVALID_COMPONENT = 303,
     INVALID_SENSOR_COMPONENT = 304,
+    NONEXIXTENT_COMPONENT_ID = 305,
+    NONEXIXTENT_SENSOR_COMPONENT_ID = 305,
 };
 
 class AbstractErrorHandler : public std::exception {
@@ -68,6 +70,14 @@ class InvalidComponent : public engine::AbstractErrorHandler {
 
 class InvalidSensorComponent : public engine::AbstractErrorHandler {
     engine::ErrorCodes error_type = engine::INVALID_SENSOR_COMPONENT;
+};
+
+class NonexistentComponentID : public engine::AbstractErrorHandler {
+    engine::ErrorCodes error_type = engine::NONEXIXTENT_COMPONENT_ID;
+};
+
+class NonexistentSensorComponentID : public engine::AbstractErrorHandler {
+    engine::ErrorCodes error_type = engine::NONEXIXTENT_SENSOR_COMPONENT_ID;
 };
 
 #endif // ERROR_SE_H
