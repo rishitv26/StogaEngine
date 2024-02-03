@@ -94,3 +94,13 @@ double engine::presets::TankDrivetrain::left_distance() {
     norm /= i;
     return norm * wheel_circum;
 }
+
+engine::AbstractDrivetrain* engine::generateNewTankDrivetrain(std::vector<int8_t> right_ports, std::vector<int8_t> left_ports, 
+        double circum,
+        bool reverse) {
+    return (engine::AbstractDrivetrain*)(new engine::presets::TankDrivetrain(right_ports, 
+        left_ports, 
+        circum,
+        reverse
+    ));
+}

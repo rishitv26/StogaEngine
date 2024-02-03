@@ -32,22 +32,12 @@ class AbstractTemporaryOdomSystem {
 protected:
 public:
     /**
-     * @brief This is a non-default contructor that initializes the TOS system.
-     * 
-     * This function must initialize TOS according to your drivetrain.
-     * Be cautious of measurement units... and of how the math works out!
-     * presets are availible...
-     * @param a the drivetrain to initialize TOS upon
-     */
-    virtual void initialize(engine::AbstractDrivetrain& a);
-
-    /**
      * @brief recalculates coordinates and updates x, y, and theta
      * 
      * Returns the new updated coordinates in form of (x, y, theta).
      * Call in an iterative loop (might not be nessaccary)... and update accordingly in code.
      */
-    virtual std::array<double, 3> updateCoordinates();
+    virtual std::array<double, 3> updateCoordinates() = 0;
 
     /**
      * @brief calculates the PID for moving forward / backward.
@@ -59,7 +49,7 @@ public:
      * @param point waypoint to reach...
      * @return std::array<double, 2> 
      */
-    virtual std::array<double, 2> move(Waypoint& point);
+    virtual std::array<double, 2> move(Waypoint& point) = 0;
 
     /**
      * @brief calculates the PID for turning clockwise / counterclockwise.
@@ -71,7 +61,7 @@ public:
      * @param point waypoint to reach...
      * @return std::array<double, 2> 
      */
-    virtual std::array<double, 2> turn(Waypoint& point);
+    virtual std::array<double, 2> turn(Waypoint& point) = 0;
 
     /**
      * @brief Powers foreward without PID regulation
@@ -83,7 +73,7 @@ public:
      * @param point waypoint to reach...
      * @return std::array<double, 2>
      */
-    virtual std::array<double, 2> power(Waypoint* point);
+    virtual std::array<double, 2> power(Waypoint& point) = 0;
 
     /**
      * @brief Checks if PID is running...
@@ -95,24 +85,26 @@ public:
      * @return true motion command is still running...
      * @return false motion command is complete.
      */
-    virtual bool is_running();
+    virtual bool is_running() = 0;
 };
 
 namespace presets {
-class IMUVectorOrientedTOS : AbstractTemporaryOdomSystem {
+class IMUVectorOrientedTOS : public AbstractTemporaryOdomSystem {
 private:
     engine::AbstractDrivetrain* drivetrain;
     engine::SensorComponentList sensors;
 public:
-    void initialize(AbstractDrivetrain* a, engine::SensorComponentList& l);
+    IMUVectorOrientedTOS() {}
+    IMUVectorOrientedTOS(AbstractDrivetrain* a, engine::SensorComponentList& l);
     std::array<double, 3> updateCoordinates();
-    std::array<double, 2> move(Waypoint* point=nullptr);
+    std::array<double, 2> move(Waypoint& point);
     std::array<double, 2> turn(Waypoint& point);
-    std::array<double, 2> power(Waypoint* point);
+    std::array<double, 2> power(Waypoint& point);
     bool is_running();
 };
-
 };
+
+engine::AbstractTemporaryOdomSystem* generateNewIMUVectorOrientedTOS(AbstractDrivetrain* a, engine::SensorComponentList& l);
 };
 
 #endif // TOS_SE_H

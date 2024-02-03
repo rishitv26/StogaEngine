@@ -147,6 +147,10 @@ public:
     double left_distance();
 };
 };
+
+engine::AbstractDrivetrain* generateNewTankDrivetrain(std::vector<int8_t> right_ports, std::vector<int8_t> left_ports, 
+        double circum,
+        bool reverse=false);
 };
 
 #endif // DRIVETRAIN_SE_H

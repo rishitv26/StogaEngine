@@ -26,8 +26,8 @@ public:
     void setup() {
         initInstances();
         
-        drivetrain = (engine::AbstractDrivetrain*)(new engine::presets::TankDrivetrain(RIGHT_PORTS, LEFT_PORTS, 20));
-        // odom = new [some class... lambda or preset];
+        drivetrain = engine::generateNewTankDrivetrain(RIGHT_PORTS, LEFT_PORTS, 20);
+        odom = engine::generateNewIMUVectorOrientedTOS(drivetrain, sensors);
         
         engine::MotorComponent m(9, "cata");
         components.registerNewComponent<engine::MotorComponent>(m);
@@ -54,6 +54,10 @@ public:
         defaultDriveBehavior();
     }
 
+    /**
+     * @brief Destroy the Robot object
+     * Deletes both drivetrain and odom at the end of the program.
+     */
     ~Robot() {
         delete drivetrain;
         delete odom;
