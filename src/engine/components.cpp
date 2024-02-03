@@ -41,24 +41,13 @@ void engine::Component::bind(engine::ControllerComponent& c) {
     }
 }
 
-std::string engine::Component::stringId() {return "component";}
+std::string engine::Component::stringId() {return id;}
 
 engine::ControllerComponent::~ControllerComponent() {
     delete controller;
 };
 
 void engine::Component::brake() {action(0);}
-
-template <typename T>
-void engine::ComponentList::registerNewComponent(T& c) {
-    engine::Component* thing = (engine::Component*)(&c);
-    try {
-        if (thing->stringId() != "component") throw InvalidComponent();
-    } catch {
-        throw InvalidComponent();
-    }
-    cpp_vect.push_back(thing);
-}
 
 size_t engine::ComponentList::size() {
     return cpp_vect.size();
@@ -68,17 +57,6 @@ engine::SensorComponent& engine::SensorComponentList::operator[](size_t index) {
     if (index >= cpp_vect.size() || index < 0) {
         return *cpp_vect[index];
     } else throw SensorComponentIndexOutOfRange();
-}
-
-template <typename T>
-void engine::SensorComponentList::registerNewSensorComponent(T& s) {
-    engine::SensorComponent* thing = (engine::SensorComponent*)(&c);
-    try {
-        if (thing->stringId() != "sensor") throw InvalidSensorComponent();
-    } catch {
-        throw InvalidSensorComponent();
-    }
-    cpp_vect.push_back(thing);
 }
 
 size_t engine::SensorComponentList::size() {
@@ -97,7 +75,7 @@ double engine::SensorComponent::data3() {
     return data1();
 }
 
-std::string engine::SensorComponent::stringId() {return "sensor";}
+std::string engine::SensorComponent::stringId() {return id;}
 
 void engine::ComponentList::bindAll(ControllerComponent& c) {
     for (Component* i : cpp_vect) {
@@ -114,12 +92,15 @@ void engine::SensorComponentList::updateAll() {
 }
 
 engine::PneumaticComponent::PneumaticComponent(
-    int p, pros::controller_digital_e_t b1, 
+    int p,
+    std::string i, 
+    pros::controller_digital_e_t b1, 
     pros::controller_digital_e_t b2, 
     pros::controller_analog_e_t b3,
     engine::binding_control_state bs
 ) {
-    piston = new pros::ADIDigitalOut(p);
+    piston = new pros::adi::AnalogOut(p);
+    id = i;
     port = p;
     button1 = b1;
     button2 = b2;
@@ -134,37 +115,92 @@ void engine::PneumaticComponent::action(int analog1, int analog2, int analog3) {
 engine::PneumaticComponent::~PneumaticComponent() {delete piston;}
 
 engine::MotorComponent::MotorComponent (
-    int p, pros::controller_digital_e_t b1, 
+    int p, 
+    std::string i,
+    pros::controller_digital_e_t b1, 
     pros::controller_digital_e_t b2, 
     pros::controller_analog_e_t b3,
     engine::binding_control_state bs,
     bool r,
-    pros::motor_brake_mode_e brake
+    pros::motor_brake_mode_e brake,
+    int max_speed
 ) {
     motor = new pros::Motor(p);
     motor->set_brake_mode(brake);
+    motor->set_reversed(r);
+    id = i;
     port = p;
     button1 = b1;
     button2 = b2;
     button3 = b3;
     bstate = bs;
     reverse = r;
+    max_volt = (int32_t)abs(max_speed * 944.9);
 }
 
 void engine::MotorComponent::action(int analog1, int analog2, int analog3) {
     if (analog1 || analog2) {
-        if (!reverse) motor->move_voltage(120000);
-        else motor->move_voltage(120000);
-    } else if (analog3 != 0) {
-        if (!reverse) motor->move(analog3);
-        else motor->move(-analog3);
+        if (analog1) {
+            motor->move_voltage(max_volt);
+        } if (analog2) {
+            motor->move_voltage(-max_volt);
+        }
+    }
+    else if (analog3) {
+        // 0.00105833333 = 127.0 / 120000.0
+        motor->move(abs(analog3) > (max_volt*0.00105833333) ? (analog3 < 0 ? -max_volt*0.00105833333 : max_volt*0.00105833333) : analog3);
     } else brake();
 }
 
 void engine::MotorComponent::brake() {motor->brake();}
 
+engine::MotorComponent::~MotorComponent() { delete motor; }
+
 void engine::ComponentList::haltAll() {
     for (int i = 0; i < size(); ++i) {
         cpp_vect[i]->brake();
     }
+}
+
+engine::IMUComponent::IMUComponent(int8_t port, std::string i) {
+    initialize(port);
+    imu = new pros::Imu(port);
+    id = i;
+}
+
+engine::IMUComponent::~IMUComponent() {
+    delete imu;
+}
+
+void engine::IMUComponent::reset() {
+    imu->tare();
+}
+
+double engine::IMUComponent::data1() {
+    return imu->get_rotation();
+}
+
+double engine::IMUComponent::data2() {
+    return imu->get_heading();
+}
+
+engine::RotationSensorComponent::RotationSensorComponent(int8_t p, std::string i, bool reverse) {
+    port = p;
+    id = i;
+    r = new pros::Rotation(port);
+    if (reverse) r->reverse();
+}
+
+engine::RotationSensorComponent::~RotationSensorComponent() {delete r;}
+
+void engine::RotationSensorComponent::reset() {
+    r->reset();
+}
+
+double engine::RotationSensorComponent::data1() {
+    return r->get_position() / 100.0;
+}
+
+double engine::RotationSensorComponent::data2() {
+    return r->get_velocity() / 100.0;
 }

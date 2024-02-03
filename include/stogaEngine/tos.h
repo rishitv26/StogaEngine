@@ -15,6 +15,7 @@
 #include <string>
 #include <array>
 #include "drivetrain.h"
+#include "component.h"
 
 namespace engine {
 struct Waypoint {
@@ -101,8 +102,9 @@ namespace presets {
 class IMUVectorOrientedTOS : AbstractTemporaryOdomSystem {
 private:
     engine::AbstractDrivetrain* drivetrain;
+    engine::SensorComponentList sensors;
 public:
-    void initialize(AbstractDrivetrain& a);
+    void initialize(AbstractDrivetrain* a, engine::SensorComponentList& l);
     std::array<double, 3> updateCoordinates();
     std::array<double, 2> move(Waypoint* point=nullptr);
     std::array<double, 2> turn(Waypoint& point);

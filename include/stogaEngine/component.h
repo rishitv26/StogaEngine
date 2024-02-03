@@ -51,6 +51,7 @@ protected:
     int button2_state = 0;
 
     int8_t port;
+    std::string id;
 public:
     explicit Component() {}
     /**
@@ -101,6 +102,7 @@ public:
 class SensorComponent {
 protected:
     int8_t port;
+    std::string id;
 public:
     /**
      * @brief Non-default contructor... Construct accordingly
@@ -150,7 +152,7 @@ private:
 public:
     Component& operator[](size_t index);
     template <typename T>
-    void registerNewComponent(T& c);
+    inline void registerNewComponent(T& c);
     
     size_t size();
     void bindAll(ControllerComponent& c);
@@ -172,11 +174,11 @@ public:
 
 // built in components:
 namespace engine {
-class PneumaticComponent : Component {
+class PneumaticComponent : public Component {
 private:
-    pros::ADIDigitalOut* piston;
+    pros::adi::AnalogOut* piston;
 public:
-    PneumaticComponent(int p, pros::controller_digital_e_t b1=(pros::controller_digital_e_t)(-1), 
+    PneumaticComponent(int p, std::string id="", pros::controller_digital_e_t b1=(pros::controller_digital_e_t)(-1), 
             pros::controller_digital_e_t b2=(pros::controller_digital_e_t)(-1), 
             pros::controller_analog_e_t b3=(pros::controller_analog_e_t)(-1),
             engine::binding_control_state bs=binding_control_state::DEFAULT);
@@ -186,22 +188,85 @@ public:
     ~PneumaticComponent();
 };
 
-class MotorComponent : Component {
+class MotorComponent : public Component {
 private:
     pros::Motor* motor;
     bool reverse;
+    int32_t max_volt;
 public:
-    MotorComponent(int p, pros::controller_digital_e_t b1=(pros::controller_digital_e_t)(-1), 
+    /**
+     * @brief Construct a new Motor Component object
+     * 
+     * @param p port to connect motor
+     * @param id unique identifier for this instance
+     * @param b1 digital button to bind [use pros::E_CONTROLLER_DIGITAL_(name of button)]
+     * @param b2 digital button to bind [use pros::E_CONTROLLER_DIGITAL_(name of button)]. does reverse action of @param b1
+     * @param b3 analog joystick to bind [use pros::E_CONTROLLER_ANALOG_(name of joystick)].
+     * @param bs edits the control state during driver control. look in enum class binding_controll_states.
+     * @param reverse reverses all motion from this motor.
+     * @param brake sets brake mode for this motor [use pros::E_MOTOR_BRAKE_(desired braking type)]
+     * @param max_speed sets the maximum speed this motor can ever reach, regardless of negative or posistive analog input. Will take its abs();
+     */
+    explicit MotorComponent(int p, std::string id="", pros::controller_digital_e_t b1=(pros::controller_digital_e_t)(-1), 
         pros::controller_digital_e_t b2=(pros::controller_digital_e_t)(-1), 
         pros::controller_analog_e_t b3=(pros::controller_analog_e_t)(-1),
         engine::binding_control_state bs=binding_control_state::DEFAULT,
         bool reverse=false,
-        pros::motor_brake_mode_e brake=pros::E_MOTOR_BRAKE_COAST);
+        pros::motor_brake_mode_e brake=pros::E_MOTOR_BRAKE_COAST,
+        int max_speed=127);
+    
     void action(int analog1, int analog2=0, int analog3=0);
     void brake();
     std::string stringId();
     ~MotorComponent();
 };
+
+class IMUComponent : public SensorComponent {
+private:
+    pros::Imu* imu;
+public:
+    explicit IMUComponent(int8_t p, std::string id="");
+    void reset();
+    // returns rotation
+    double data1();
+    // returns heading
+    double data2();
+
+    ~IMUComponent();
 };
+
+class RotationSensorComponent : public SensorComponent {
+private:
+    pros::Rotation* r;
+public:
+    explicit RotationSensorComponent(int8_t p, std::string id="", bool reverse=false);
+    void reset();
+    // returns current position (how much it turned) in degrees
+    double data1();
+    // returns change (speed) of position in degrees per second
+    double data2();
+
+    ~RotationSensorComponent();
+};
+};
+
+template <typename T>
+inline void engine::ComponentList::registerNewComponent(T& c) {
+    engine::Component* thing = dynamic_cast<engine::Component*>(&c);
+    if (thing == nullptr) {
+        throw InvalidComponent();
+    }
+    cpp_vect.push_back(thing);
+}
+
+template <typename T>
+inline void engine::SensorComponentList::registerNewSensorComponent(T& s) {
+    engine::SensorComponent* thing = dynamic_cast<engine::SensorComponent*>(&s);
+    if (thing == nullptr) {
+        throw InvalidSensorComponent();
+    }
+    cpp_vect.push_back(thing);
+}
+
 
 #endif // COMPONENT_SE_H

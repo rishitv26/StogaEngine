@@ -10,6 +10,7 @@
  */
 
 #include "stogaEngine/lib.h"
+#include "settings.h"
 
 class Robot : public engine::Bot {
 private:
@@ -24,12 +25,23 @@ public:
      */
     void setup() {
         initInstances();
-        drivetrain = (engine::AbstractDrivetrain*)(new engine::presets::TankDrivetrain({}, {}, 20));
+        
+        drivetrain = (engine::AbstractDrivetrain*)(new engine::presets::TankDrivetrain(RIGHT_PORTS, LEFT_PORTS, 20));
         // odom = new [some class... lambda or preset];
-        engine::MotorComponent m(1);
+        
+        engine::MotorComponent m(9, "cata");
         components.registerNewComponent<engine::MotorComponent>(m);
-        engine::PneumaticComponent p('A');
+        engine::MotorComponent intakeR(10, "right intake");
+        components.registerNewComponent<engine::MotorComponent>(intakeR);
+        engine::MotorComponent intakeL(11, "left intake");
+        components.registerNewComponent<engine::MotorComponent>(intakeL);
+        
+        engine::PneumaticComponent p('A', "front wings");
         components.registerNewComponent<engine::PneumaticComponent>(p);
+        engine::PneumaticComponent p2('B', "back wings");
+        components.registerNewComponent<engine::PneumaticComponent>(p2);
+        engine::PneumaticComponent blocker('C', "blocker");
+        components.registerNewComponent<engine::PneumaticComponent>(blocker);
     }
 
     /**

@@ -2,7 +2,7 @@
 #include "api.h"
 using namespace pros::lcd;
 
-explicit engine::AbstractErrorHandler::AbstractErrorHandler() {
+engine::AbstractErrorHandler::AbstractErrorHandler() {
     display();
 };
 
