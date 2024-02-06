@@ -18,5 +18,6 @@
 #include "tos.h"
 #include "component.h"
 #include "calulations.h"
+#include "util.h"
 
 #endif // STOGAENGINE_LIBRARY_H

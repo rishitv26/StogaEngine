@@ -11,7 +11,8 @@ engine::Component& engine::ComponentList::operator[](size_t index) {
 }
 
 void engine::Component::bind(engine::ControllerComponent& c) {
-    if (bstate == binding_control_state::DEFAULT) {
+    if (bstate == binding_control_state::NONE) return;
+    else if (bstate == binding_control_state::DEFAULT) {
         action(
             (int)button1 == -1 ? 0 : c.controller->get_digital(button1),
             (int)button2 == -1 ? 0 : c.controller->get_digital(button2),

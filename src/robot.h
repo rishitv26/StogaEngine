@@ -27,7 +27,7 @@ public:
         initInstances();
         
         drivetrain = engine::generateNewTankDrivetrain(RIGHT_PORTS, LEFT_PORTS, 20);
-        odom = engine::generateNewIMUVectorOrientedTOS(drivetrain, sensors);
+        odom = engine::generateNewIMUVectorOrientedTOS(drivetrain, sensors, "imu");
         
         engine::MotorComponent m(9, "cata");
         components.registerNewComponent<engine::MotorComponent>(m);
@@ -42,6 +42,10 @@ public:
         components.registerNewComponent<engine::PneumaticComponent>(p2);
         engine::PneumaticComponent blocker('C', "blocker");
         components.registerNewComponent<engine::PneumaticComponent>(blocker);
+    }
+
+    void autons() {
+        
     }
 
     /**

@@ -23,6 +23,7 @@ enum class binding_control_state {
     REVERSE = 1,
     STICKY = 2,
     REVERSE_STICKY = 3,
+    NONE = 4,
 };
 
 class ControllerComponent {

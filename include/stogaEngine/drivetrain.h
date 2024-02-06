@@ -19,7 +19,7 @@ class AbstractDrivetrain {
 protected:
     pros::MotorGroup* right = nullptr;
     pros::MotorGroup* left = nullptr;
-
+public:
     /**
      * @brief Get the Right Motor Group object
      * returns pointer to the MotorGroup object representing right side...
@@ -32,7 +32,7 @@ protected:
      * @return pros::MotorGroup* 
      */
     pros::MotorGroup* getLeftMotorGroup();
-public:
+
     /// @brief Default constructor. Does nothing...
     explicit AbstractDrivetrain() {};
     
