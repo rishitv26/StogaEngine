@@ -12,6 +12,10 @@
 #include "stogaEngine/lib.h"
 #include "settings.h"
 
+std::vector<engine::Waypoint> path = {
+
+};
+
 class Robot : public engine::Bot {
 private:
 public:
@@ -28,6 +32,8 @@ public:
         
         drivetrain = engine::generateNewTankDrivetrain(RIGHT_PORTS, LEFT_PORTS, 20);
         odom = engine::generateNewIMUVectorOrientedTOS(drivetrain, sensors, "imu");
+        ins = engine::Instructions(path);
+        engine = engine::generateNewEngine(&ins);
         
         engine::MotorComponent m(9, "cata");
         components.registerNewComponent<engine::MotorComponent>(m);
@@ -65,6 +71,7 @@ public:
     ~Robot() {
         delete drivetrain;
         delete odom;
+        delete engine;
     }
 };
 

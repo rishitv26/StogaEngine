@@ -159,7 +159,7 @@ public:
     void bindAll(ControllerComponent& c);
     void haltAll();
 
-    Component* findID(std::string& s);
+    Component* findID(std::string s);
 };
 
 class SensorComponentList {
@@ -173,7 +173,7 @@ public:
     size_t size();
     void updateAll();
 
-    SensorComponent* findID(std::string& s);
+    SensorComponent* findID(std::string s);
 };
 };
 
@@ -230,7 +230,7 @@ class IMUComponent : public SensorComponent {
 private:
     pros::Imu* imu;
 public:
-    explicit IMUComponent(int8_t p, std::string id="");
+    explicit IMUComponent(int8_t p, std::string id="", bool block=false);
     void reset();
     // returns rotation
     double data1();

@@ -84,14 +84,14 @@ void engine::ComponentList::bindAll(ControllerComponent& c) {
     }
 }
 
-engine::SensorComponent* engine::SensorComponentList::findID(std::string& s) {
+engine::SensorComponent* engine::SensorComponentList::findID(std::string s) {
     for (int i = 0; i < size(); ++i) {
         if (cpp_vect[i]->stringId() == s) return cpp_vect[i];
     }
     throw NonexistentSensorComponentID();
 }
 
-engine::Component* engine::ComponentList::findID(std::string& s) {
+engine::Component* engine::ComponentList::findID(std::string s) {
     for (int i = 0; i < size(); ++i) {
         if (cpp_vect[i]->stringId() == s) return cpp_vect[i];
     }
@@ -177,10 +177,11 @@ void engine::ComponentList::haltAll() {
     }
 }
 
-engine::IMUComponent::IMUComponent(int8_t port, std::string i) {
+engine::IMUComponent::IMUComponent(int8_t port, std::string i, bool block) {
     initialize(port);
     imu = new pros::Imu(port);
     id = i;
+    imu->reset(block);
 }
 
 engine::IMUComponent::~IMUComponent() {
@@ -188,14 +189,17 @@ engine::IMUComponent::~IMUComponent() {
 }
 
 void engine::IMUComponent::reset() {
+    if (imu->is_calibrating()) return;
     imu->tare();
 }
 
 double engine::IMUComponent::data1() {
+    if (imu->is_calibrating()) return 0;
     return imu->get_rotation();
 }
 
 double engine::IMUComponent::data2() {
+    if (imu->is_calibrating()) return 0;
     return imu->get_heading();
 }
 

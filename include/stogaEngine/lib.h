@@ -19,5 +19,6 @@
 #include "component.h"
 #include "calulations.h"
 #include "util.h"
+#include "engine.h"
 
 #endif // STOGAENGINE_LIBRARY_H

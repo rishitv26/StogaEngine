@@ -15,6 +15,7 @@
 #include "drivetrain.h"
 #include "tos.h"
 #include "component.h"
+#include "engine.h"
 
 namespace engine {
 class Bot {
@@ -35,6 +36,15 @@ public:
      * @brief TOS instance... Be careful while initializing this!
      */
     engine::AbstractTemporaryOdomSystem* odom;
+    /**
+     * @brief Instructions, feed into engine to get running auton. 
+     */
+    engine::Instructions ins;
+    /**
+     * @brief The auton engine of the bot.
+     * Makes up the escence of all auton routines in Stoga Engine
+     */
+    engine::Engine* engine;
     /**
      * @brief All components for the bot...
      * Add auxillary items like catas, pistons, etc...
