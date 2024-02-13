@@ -28,12 +28,10 @@ public:
      * Also configure all settings. Use things from settings.h if nessecary.
      */
     void setup() {
-        initInstances();
+        initInstances(path);
         
         drivetrain = engine::generateNewTankDrivetrain(RIGHT_PORTS, LEFT_PORTS, 20);
-        odom = engine::generateNewIMUVectorOrientedTOS(drivetrain, sensors, "imu");
-        ins = engine::Instructions(path);
-        engine = engine::generateNewEngine(&ins);
+        odom = engine::generateNewIMUDifferentialDrive(drivetrain, sensors, "imu");
         
         engine::MotorComponent m(9, "cata");
         components.registerNewComponent<engine::MotorComponent>(m);
@@ -51,7 +49,7 @@ public:
     }
 
     void autons() {
-        
+        engine->executeAllCommands();
     }
 
     /**

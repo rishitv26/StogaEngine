@@ -20,6 +20,10 @@ private:
 public:
     explicit Engine() {};
     explicit Engine(Instructions* x);
+    
+    void reconfigure(Instructions* x);
+
+    void executeAllCommands();
 };
 
 Engine* generateNewEngine(Instructions* x);

@@ -46,37 +46,37 @@ public:
      * @brief calculates the PID for moving forward / backward.
      * 
      * Use information about the current goal and the location of the bot...
-     * Should not block any code...
+     * Should block code...
      * Skip if instruction is incorrect (if command is bullcrap, and not move, skip)
      * 
      * @param point waypoint to reach...
-     * @return std::array<double, 2> 
+     * @return true if command was correct, false othrwise.
      */
-    virtual std::array<double, 2> move(Waypoint& point) = 0;
+    virtual bool move(Waypoint& point) = 0;
 
     /**
      * @brief calculates the PID for turning clockwise / counterclockwise.
      * 
      * Use information about the current goal and the location of the bot...
-     * Should not block any code... 
+     * Should block code... 
      * Skip if instruction is incorrect (if command is bullcrap, and not turn, skip)
      * 
      * @param point waypoint to reach...
-     * @return std::array<double, 2> 
+     * @return true if command was correct, false othrwise.
      */
-    virtual std::array<double, 2> turn(Waypoint& point) = 0;
+    virtual bool turn(Waypoint& point) = 0;
 
     /**
      * @brief Powers foreward without PID regulation
      * 
      * Use information about timing...
-     * Can block code if nessecary, must notify **is_running()** method upon completion... 
+     * Should block code... 
      * Skip if instruction is incorrect (if command is bullcrap, and not power, skip)
      * 
      * @param point waypoint to reach...
-     * @return std::array<double, 2>
+     * @return true if command was correct, false othrwise.
      */
-    virtual std::array<double, 2> power(Waypoint& point) = 0;
+    virtual bool power(Waypoint& point) = 0;
 
     /**
      * @brief Checks if PID is running...
@@ -85,8 +85,8 @@ public:
      * Power also counts as a "motion" function.
      * Keep in mind this function checks for motion in the **Drivetrain**
      * 
-     * @return true motion command is still running...
-     * @return false motion command is complete.
+     * @return true if motion command is still running...
+     * @return false if motion command is complete.
      */
     virtual bool is_running() = 0;
 
@@ -102,7 +102,7 @@ public:
 };
 
 namespace presets {
-class IMUVectorOrientedTOS : public AbstractTemporaryOdomSystem {
+class IMUDifferentialDrive : public AbstractTemporaryOdomSystem {
 private:
     engine::AbstractDrivetrain* drivetrain;
     engine::SensorComponentList sensors;
@@ -111,8 +111,10 @@ private:
 
     double rel_l = 0;
     double rel_r = 0;
+    double rel_th = 0;
     double old_l = 0;
     double old_r = 0;
+    double old_th = 0;
     double theta = 0;
 
     double latest_turn = 0;
@@ -138,8 +140,8 @@ private:
     double INERTIAL_FACTOR = 1;
     bool is_bashing = 0;
 public:
-    IMUVectorOrientedTOS():approach(engine::CartesianLine(0, 0, 0)), negate(engine::CartesianLine(0, 0, 0)) {}
-    IMUVectorOrientedTOS(AbstractDrivetrain* a, engine::SensorComponentList& l, std::string imuID);
+    IMUDifferentialDrive():approach(engine::CartesianLine(0, 0, 0)), negate(engine::CartesianLine(0, 0, 0)) {}
+    IMUDifferentialDrive(AbstractDrivetrain* a, engine::SensorComponentList& l, std::string imuID);
     void setBrakingConditions(double min_allowed_error=0, 
             double min_allowed_error_deg=0, 
             double error_time=0, 
@@ -147,15 +149,15 @@ public:
     void setApproachMode(bool pass=false);
     void setInertialFactor(double val);
     std::array<double, 3> updateCoordinates(double odom_constant);
-    std::array<double, 2> move(Waypoint& point);
-    std::array<double, 2> turn(Waypoint& point);
-    std::array<double, 2> power(Waypoint& point);
+    bool move(Waypoint& point);
+    bool turn(Waypoint& point);
+    bool power(Waypoint& point);
     void reset(bool reset_cord=false);
     bool is_running();
 };
 };
 
-engine::AbstractTemporaryOdomSystem* generateNewIMUVectorOrientedTOS(AbstractDrivetrain* a, engine::SensorComponentList& l, std::string imuID);
+engine::AbstractTemporaryOdomSystem* generateNewIMUDifferentialDrive(AbstractDrivetrain* a, engine::SensorComponentList& l, std::string imuID);
 };
 
 #endif // TOS_SE_H

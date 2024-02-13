@@ -62,7 +62,7 @@ public:
      * initializes all instances.. except for drivetrain and odom.
      * They are programmer specific, so they are initialized in **setup()**
      */
-    virtual void initInstances();
+    virtual void initInstances(std::vector<engine::Waypoint>& p);
 
     /**
      * @brief Initializes all instances of the robot...

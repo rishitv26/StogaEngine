@@ -1,7 +1,9 @@
 #include "stogaEngine/robot.h"
 
-void engine::Bot::initInstances() {
+void engine::Bot::initInstances(std::vector<engine::Waypoint>& p) {
     master.initialize();
+    ins = engine::Instructions(p);
+    engine = engine::generateNewEngine(&ins);
 }
 
 engine::Bot::~Bot() {
