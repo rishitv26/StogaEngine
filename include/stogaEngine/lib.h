@@ -13,5 +13,9 @@
 #define STOGAENGINE_LIBRARY_H
 
 #include "robot.h"
+#include "data.h"
+#include "chassis.h"
+#include "pid.h"
+#include "train.h"
 
 #endif // STOGAENGINE_LIBRARY_H

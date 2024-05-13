@@ -3,7 +3,7 @@
  * @author Rishit Varshney
  * @brief This file contains the chassis class for movement and its subordinate helper classes and methods.
  * @version 0.1
- * @date 2024-01-30
+ * @date 2024-05-12
  *
  * @copyright Copyright (c) 2024
  *
@@ -12,6 +12,7 @@
 #ifndef CHASSIS_SE_H
 #define CHASSIS_SE_H
 
+#include "pid.h"
 
 namespace engine {
 	class Chassis {
