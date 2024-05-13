@@ -1,0 +1,19 @@
+{
+  "configurations": [
+    {
+      "inheritEnvironments": [
+        "mingw_64"
+      ],
+      "name": "Mingw64",
+      "includePath": [
+        "${env.PROS_TOOLCHAIN}\\arm-none-eabi\\include\\c++\\10.3.1\\**",
+        "${workspaceRoot}\\**",
+        "${workspaceRoot}\\include\\**",
+        "${workspaceRoot}\\include\\pros\\**",
+        "${workspaceRoot}\\include\\okapi\\**",
+        "${workspaceRoot}\\include\\display\\**"
+      ],
+      "intelliSenseMode": "linux-gcc-x64"
+    }
+  ]
+}
