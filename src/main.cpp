@@ -27,7 +27,7 @@ void competition_initialize() {}
 
 // job of interpreter...
 void autonomous() {
-
+	
 }
 
 void opcontrol() {

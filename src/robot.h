@@ -12,64 +12,9 @@
 #include "stogaEngine/lib.h"
 #include "settings.h"
 
-std::vector<engine::Waypoint> path = {
-
-};
-
-class Robot : public engine::Bot {
+class Bot : public engine::Robot {
 private:
 public:
-    /*
-     * Must call **initInstances()** method before anything
-     * 
-     * Register all compenents and sensors here.
-     * Also initialize drivetrain and odom.
-     * 
-     * Also configure all settings. Use things from settings.h if nessecary.
-     */
-    void setup() {
-        initInstances(path);
-        
-        drivetrain = engine::generateNewTankDrivetrain(RIGHT_PORTS, LEFT_PORTS, 20);
-        odom = engine::generateNewIMUDifferentialDrive(drivetrain, sensors, "imu");
-        
-        engine::MotorComponent m(9, "cata");
-        components.registerNewComponent<engine::MotorComponent>(m);
-        engine::MotorComponent intakeR(10, "right intake");
-        components.registerNewComponent<engine::MotorComponent>(intakeR);
-        engine::MotorComponent intakeL(11, "left intake");
-        components.registerNewComponent<engine::MotorComponent>(intakeL);
-        
-        engine::PneumaticComponent p('A', "front wings");
-        components.registerNewComponent<engine::PneumaticComponent>(p);
-        engine::PneumaticComponent p2('B', "back wings");
-        components.registerNewComponent<engine::PneumaticComponent>(p2);
-        engine::PneumaticComponent blocker('C', "blocker");
-        components.registerNewComponent<engine::PneumaticComponent>(blocker);
-    }
-
-    void autons() {
-        engine->executeAllCommands();
-    }
-
-    /**
-     * @brief Drive control...
-     * 
-     * Code your opcontrol (or drive control) here. There is already a default behavior provided
-     * such that it follows the desired binding set for each component in **setup()**
-     */
-    void driveControl() {
-        defaultDriveBehavior();
-    }
-
-    /**
-     * @brief Destroy the Robot object
-     * Deletes both drivetrain and odom at the end of the program.
-     */
-    ~Robot() {
-        delete drivetrain;
-        delete odom;
-        delete engine;
-    }
+    
 };
 

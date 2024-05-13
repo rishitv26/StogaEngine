@@ -12,13 +12,6 @@
 #ifndef STOGAENGINE_LIBRARY_H
 #define STOGAENGINE_LIBRARY_H
 
-#include "drivetrain.h"
-#include "errors.h"
 #include "robot.h"
-#include "tos.h"
-#include "component.h"
-#include "calulations.h"
-#include "util.h"
-#include "engine.h"
 
 #endif // STOGAENGINE_LIBRARY_H
