@@ -13,12 +13,41 @@
 #define CHASSIS_SE_H
 
 #include "pid.h"
+#include "train.h"
 
 namespace engine {
 	class Chassis {
 	private:
+		Train left;
+		Train right;
+
 	public:
 		Chassis();
+		/*
+		* Constructs the chassis object.
+		* if any ports have to be reverse, make them negative.
+		* 
+		* @param rights the ports for the right wheels
+		* @param lefts the ports for the left wheels
+		* @param rightPort odom sensor port for right wheels
+		* @param leftPort odom sensor port for the left wheels
+		* @param centerPort odom sensor port for the center wheels
+		*/
+		Chassis(std::initializer_list<int> rights, std::initializer_list<int> lefts, int rightPort, int leftPort, int centerPort);
+		/*
+		* Gets the right train object as a pointer.
+		* Can be used to change object, but with caution.
+		* 
+		* @returns the Train pointer.
+		*/
+		Train* getRightTrain();
+		/*
+		* Gets the left train object as a pointer.
+		* Can be used to change object, but with caution.
+		*
+		* @returns the Train pointer.
+		*/
+		Train* getLeftTrain();
 		/*
 		 * Sets the PID Constants for the move motion (vertical motion)
 		 * 

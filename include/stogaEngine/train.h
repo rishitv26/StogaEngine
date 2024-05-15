@@ -17,6 +17,9 @@
 #include "../api.h"
 
 namespace engine {
+	/*
+	* A set of motors with a common behaviour. For example: Left motors of Chassis.
+	*/
 	class Train {
 	protected:
 		pros::MotorGroup motors;
@@ -24,6 +27,7 @@ namespace engine {
 		bool isSlewEnabled;
 		Data<double> data;
 		double oldDistance;
+
 	public:
 		Train();
 		/*
@@ -60,24 +64,47 @@ namespace engine {
 		* @param value the voltage (mV) value [-12000, 12000] to set speed of motor.
 		*/
 		virtual void setVoltage(int miliVolts);
-		
-		virtual int getSpeedRPM();
-		
+		/*
+		* Gets the ACTUALL speed of the motors in average.
+		* 
+		* @returns the actuall RPM of the motors.
+		*/
+		virtual double getSpeedRPM();
+		/*
+		* Turns on slew for all motors in Train.
+		* Slew only affected positive accleration (not when its slowing down)
+		* 
+		* @param maxDelta the maximum change in analog speed [0, 127]
+		*/
 		virtual void enableSlew(int maxDelta);
+		/*
+		* Turns off slew for all motors in Train.
+		*/
 		virtual void disableSlew();
-
+		/*
+		* Gets the status of the motors and returns as a Data class.
+		* The data includes telemetry, targets, and other things such as gearings.
+		* 
+		* @returns the data in terms of the Data class.
+		*/
 		virtual Data<double> getStatus();
-
+		/*
+		* Reverses the current direction for all motors.
+		*/
 		virtual void reverse();
+		/*
+		* After each call, this method calculates the change in distance
+		* from the last time this method was called.
+		* 
+		* @returns the change in distance
+		*/
 		double newDistanceTraveled();
-
-		void setMetric();
+		/*
+		* Sets the metrics of the measurements of distance from the motors.
+		* TODO
+		*/
+		// void setMetric();
 	};
-
-	class PerpendicularTrain : public Train {
-		// TODO
-	};
-
 };
 
 
